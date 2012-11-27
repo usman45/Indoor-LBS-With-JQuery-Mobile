@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'LBSwithJquery' target in the 'LBSwithJquery' project
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+#endif
