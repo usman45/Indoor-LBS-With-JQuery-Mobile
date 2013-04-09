@@ -158,8 +158,8 @@ function addLayerToList(layer) {
     });
 }
 
-
-$("#directions").live('click',function(){
+//Draws route on the map
+$('#directions').live('pageshow',function(event, ui){
     navpts=[];
     navlinks=[];
     var nodes;
