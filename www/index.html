@@ -1,4 +1,4 @@
-<!--my html5 app-->
+<!--html5 app-->
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,11 +16,10 @@
         <script src="libraries/OpenLayers-2.12.js"></script>
         <script src="libraries/phonegap-1.0.0.js"></script>
 
-        <script src="navigation.js"></script>
         <script src="basemap.js"></script>
         <script src="features.js"></script>
          
-         <!--JSON data -->   
+         <!--coordinates data -->   
         <script type="text/javascript" src="nav/main1.js"></script>
         <script type="text/javascript" src="nav/main2.js"></script>
         <script type="text/javascript" src="nav/main3.js"></script>
@@ -29,8 +28,7 @@
     <body>
 	
 		<!--Home Page-->
-        <div data-role="page" id="mappage" data-theme="b">
-		
+        <div data-role="page" id="mappage" data-theme="b">		
 			<div data-role="footer" data-theme="b">
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
 				<a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>
@@ -40,8 +38,7 @@
 		
 			<!--/content-->
 			<div data-role="content">
-				<div id="map"></div>
-				
+				<div id="map"></div>				
 				<!--Zoom-In/out navigations-->
 				<div id="navigation" data-role="controlgroup" data-type="vertical">
 					<a href="#" data-role="button" data-icon="plus" id="plus"
