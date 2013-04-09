@@ -157,3 +157,111 @@ function addLayerToList(layer) {
         }
     });
 }
+
+
+$("#directions").live('click',function(){
+    navpts=[];
+    navlinks=[];
+    var nodes;
+    var routingTarget=false;
+
+    function drawRoute() {
+        var node;
+        node=routingTarget;
+        navLayer.removeAllFeatures();
+        if(!node) return;       
+        while(node.src) {
+            if(node.floor=='main'+activeFloor) {
+            navLayer.addFeatures([
+                        //new OpenLayers.Feature.Vector(node.pt,{},{graphicName:'cross',strokeColor:'#ff0000',strokeWidth:1,pointRadius:4}),
+                        new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([node.src.pt,node.pt]),{},{strokeColor:'#ff0000',strokeWidth:2})
+            ]);
+            }
+            node=node.src;
+        }
+    }
+    function showRoute(first,last) {
+        var i,j;
+        var pts,links;
+        var llProj,mapProj;
+        var node1,node2,dist;
+        var edge=[];
+        nodes=[];
+        llProj=new OpenLayers.Projection('EPSG:4326');
+        mapProj=map.getProjectionObject();
+        for(i in navpts) {
+            if(!navpts.hasOwnProperty(i)) continue;
+            pts=navpts[i];
+            for(j=0;j<pts.length;j+=4) {
+                nodes[i+' '+pts[j]]={visited:0,target:0,dist:0,src:false,floor:i,name:pts[j+1],pt:new OpenLayers.Geometry.Point(pts[j+3],pts[j+2]).transform(llProj,mapProj),lat:pts[j+2],lon:pts[j+3],access:[]};
+            }
+        }
+        for(i in navlinks) {
+            if(!navlinks.hasOwnProperty(i)) continue;
+            links=navlinks[i];
+            for(j=0;j<links.length;j+=3) {
+                node1=nodes[i+' '+links[j+1]];
+                node2=nodes[i+' '+links[j+2]];
+                dist=node1.pt.distanceTo(node2.pt);
+                node1.access.push([node2,dist]);
+                node2.access.push([node1,dist]);
+            }
+        }
+        for(i in navpts) {
+            if(!navpts.hasOwnProperty(i)) continue;
+            pts=navpts[i];
+            for(j=0;j<pts.length;j+=4) {
+                if(pts[j+1]==first) {
+                    node=nodes[i+' '+pts[j]];
+                    node.visited=2;
+                    edge.push(node);
+                }
+                if(pts[j+1]==last) {
+                    node=nodes[i+' '+pts[j]];
+                    node.target=1;
+                }
+            }
+        }
+        var pos,node,next,n;
+        while(edge.length>0) {
+            pos=0;
+            for(i=1;i<edge.length;i++) {
+                if(edge[i].dist<edge[pos].dist) pos=i;
+            }
+            node=edge[pos];
+    //      alert('pos '+pos);
+    //      alert(node.name+' '+node.visited);
+            for(i=0;i<node.access.length;i++) {
+                next=node.access[i];
+                n=next[0];
+    //          alert(n.name+' '+n.visited);
+                if(n.visited==0) {
+                    n.visited=1;
+                    n.dist=node.dist+next[1];
+                    n.src=node;
+                    edge.push(n);
+                } else if(n.visited==1) {
+                    if(n.dist>node+dist+next[1]) {
+                        n.dist=node.dist+next[1];
+                        n.src=node;
+                    }
+                }
+            }
+    /*
+                    navLayer.addFeatures([
+                                  new OpenLayers.Feature.Vector(node.pt,{},{graphicName:'cross',strokeColor:'#ff0000',strokeWidth:1,pointRadius:4}),
+                                  new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([node.src.pt,node.pt]),{},{strokeColor:'#ff0000',strokeWidth:2})
+                    ]);
+    */
+            if(node.target) {
+                routingTarget=node;
+                drawRoute();
+                break;
+            }
+
+            node.visited=2;
+            edge.splice(pos,1);
+        }
+    //    map.zoomToExtent(navLayer.getDataExtent());
+    }
+});
