@@ -47,10 +47,10 @@ body {
     opacity: 1;
 }
 .ui-icon-locate {
-    background-image: url(img/locate.png);
+    background-image: url(..//img/locate.png);
 }
 .ui-icon-layers {
-    background-image: url(img/openlayers.png);
+    background-image: url(..//img/openlayers.png);
 }
 .ui-content .ui-listview-inset, #search_results {
     margin: 1em;

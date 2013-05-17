@@ -45,7 +45,7 @@ $("#locate").live('click',function(){
 });
 
 //fix the content height AFTER jQuery Mobile has rendered the map page
-$('#mappage').live('pageshow',function (){
+$('#mappage').live('click',function (){
     fixContentHeight();
 });
     
@@ -55,7 +55,7 @@ $(window).bind("orientationchange resize pageshow", fixContentHeight);
 $('#popup').live('pageshow',function(event, ui){
     var li = "";
     for(var attr in selectedFeature.attributes){
-        li += "<li><div style='width:25%;float:left'>" + attr + "</div><div style='width:75%;float:right'>" 
+        li += "<li><div style='width:50%;float:left'>" + attr + "</div><div style='width:50%;float:right'>" 
         + selectedFeature.attributes[attr] + "</div></li>";
     }
     $("ul#details-list").empty().append(li).listview("refresh");

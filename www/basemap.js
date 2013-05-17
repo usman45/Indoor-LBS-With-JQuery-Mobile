@@ -4,8 +4,14 @@ var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 
 // initialize map when page ready
 var map;
-var gg = new OpenLayers.Projection("EPSG:4326");
-var sm = new OpenLayers.Projection("EPSG:900913");
+
+// set up projections
+// World Geodetic System 1984 projection (lon/lat)
+var WGS84 = new OpenLayers.Projection("EPSG:4326");
+
+// WGS84 Google Mercator projection (meters)
+var WGS84_google_mercator = new OpenLayers.Projection("EPSG:900913");
+
 
 var init = function (onSelectFeatureFunction) {
 
@@ -13,7 +19,7 @@ var init = function (onSelectFeatureFunction) {
 
     var sprintersLayer = new OpenLayers.Layer.Vector("Sprinters", {
         styleMap: new OpenLayers.StyleMap({
-            externalGraphic: "img/twitter.png",
+            externalGraphic: "img/mobile-loc.png",
             graphicOpacity: 1.0,
             graphicWidth: 16,
             graphicHeight: 26,
@@ -22,7 +28,7 @@ var init = function (onSelectFeatureFunction) {
     });
 
     var sprinters = getFeatures();
-    sprintersLayer.addFeatures(sprinters);
+    sprintersLayer.addFeatures(sprinters, geojson_layer);
 
     var selectControl = new OpenLayers.Control.SelectFeature(sprintersLayer, {
         autoActivate:true,
@@ -36,11 +42,24 @@ var init = function (onSelectFeatureFunction) {
             timeout: 7000
         }
     });
+
+    // geoJSON Layer
+     var geojson_layer = new OpenLayers.Layer.Vector("GeoJSON", {
+        projection: WGS84,
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: "geoJSON.js",
+            format: new OpenLayers.Format.GeoJSON()
+        })
+    });
+    console.log(geojson_layer);
+
     // create map
     map = new OpenLayers.Map({
         div: "map",
         theme: null,
-        projection: sm,
+        projection: WGS84_google_mercator,
+        displayProjection: WGS84,
         numZoomLevels: 18,
         controls: [
             new OpenLayers.Control.Attribution(),
@@ -129,13 +148,14 @@ var init = function (onSelectFeatureFunction) {
                                                             return('tiles-main-floor4/'+z+'/'+x+'/'+y+'.png');
                                                             }}),
             vector,
+            geojson_layer,
             sprintersLayer
         ],
         zoom: 16
     });
     //Set center on Otaniemi
     map.setCenter(new OpenLayers.LonLat(24.827, 60.186).transform(
-                                                                    new OpenLayers.Projection("EPSG:4326"),
+                                                                    new OpenLayers.Projection(WGS84),
                                                                     map.getProjectionObject()
                                                                     ));
     var style = {
@@ -175,40 +195,26 @@ var init = function (onSelectFeatureFunction) {
     function getFeatures() {
         var features = {
             "type": "FeatureCollection",
-            "features": [
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [1332700, 7906300]},
-                    "properties": {"Name": "Igor Tihonov", "Country":"Sweden", "City":"Gothenburg"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [790300, 6573900]},
-                    "properties": {"Name": "Marc Jansen", "Country":"Germany", "City":"Bonn"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [568600, 6817300]},
-                    "properties": {"Name": "Bart van den Eijnden", "Country":"Netherlands", "City":"Utrecht"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [-7909900, 5215100]},
-                    "properties": {"Name": "Christopher Schmidt", "Country":"United States of America", "City":"Boston"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [-937400, 5093200]},
-                    "properties": {"Name": "Jorge Gustavo Rocha", "Country":"Portugal", "City":"Braga"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [-355300, 7547800]},
-                    "properties": {"Name": "Jennie Fletcher ", "Country":"Scotland", "City":"Edinburgh"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [657068.53608487, 5712321.2472725]},
-                    "properties": {"Name": "Bruno Binet ", "Country":"France", "City":"Chambéry"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [667250.8958124, 5668048.6072737]},
-                    "properties": {"Name": "Eric Lemoine", "Country":"France", "City":"Theys"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [653518.03606319, 5721118.5122914]},
-                    "properties": {"Name": "Antoine Abt", "Country":"France", "City":"La Motte Servolex"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [657985.78042416, 5711862.6251028]},
-                    "properties": {"Name": "Pierre Giraud", "Country":"France", "City":"Chambéry"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [742941.93818208, 5861818.9477535]},
-                    "properties": {"Name": "Stéphane Brunner", "Country":"Switzerland", "City":"Paudex"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [736082.61064069, 5908165.4649505]},
-                    "properties": {"Name": "Frédéric Junod", "Country":"Switzerland", "City":"Montagny-près-Yverdon"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [771595.97057525, 5912284.7041793]},
-                    "properties": {"Name": "Cédric Moullet", "Country":"Switzerland", "City":"Payerne"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [744205.23922364, 5861277.319748]},
-                    "properties": {"Name": "Benoit Quartier", "Country":"Switzerland", "City":"Lutry"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [1717430.147101, 5954568.7127565]},
-                    "properties": {"Name": "Andreas Hocevar", "Country":"Austria", "City":"Graz"}},
-                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [-12362007.067301,5729082.2365672]},
-                    "properties": {"Name": "Tim Schaub", "Country":"United States of America", "City":"Bozeman"}}
-            ]
+            "features": 
+                [
+                    {"geometry": {"type": "Point", "coordinates": [2761700, 8441900]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120140355", "unknown_4": "0", "housing_type": "039", "unknown_2": "1", "unknown_3": "90", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 04:35:09", "realized_volume": "4", "realized_amount": "1", "container_type": "syväsäiliö", "volume": "4 m3", "no_of_bin": "1", "address": "JÄMERÄNTAIVAL 3 A - C", "y": "6674975.45676261", "x": "25490920.2266159", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.838496312082057, 60.189041842697094]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120134329", "unknown_4": "0", "housing_type": "039", "unknown_2": "1", "unknown_3": "160", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 04:41:01", "realized_volume": "8", "realized_amount": "2", "container_type": "syväsäiliö", "volume": "4 m3", "no_of_bin": "1", "address": "JÄMERÄNTAIVAL 11", "y": "6675145.66435623", "x": "25491039.5635832", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.839400768435855, 60.19005039319976]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120134329", "unknown_4": "0", "housing_type": "039", "unknown_2": "1", "unknown_3": "200", "waste_point": "2", "unknown_1": "paino", "timestamp": "2013-02-20 04:38:33", "realized_volume": "6", "realized_amount": "1", "container_type": "syväsäiliö", "volume": "6 m3", "no_of_bin": "1", "address": "JÄMERÄNTAIVAL 11", "y": "6675257.90990849", "x": "25491090.0172298", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.6764096374036, 60.22306061090451]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120353362", "unknown_4": "0", "housing_type": "119", "unknown_2": "1", "unknown_3": "470", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:06:21", "realized_volume": "4", "realized_amount": "1", "container_type": "etukontti", "volume": "4 m3", "no_of_bin": "1", "address": "KUNINKAANTIE 2 A", "y": "6678968.89255432", "x": "25482065.3951843", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.719324459966533, 60.22217978283005]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB140559182", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "210", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:00:20", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "VANHA TURUNTIE 14", "y": "6678859.86837247", "x": "25484443.4697213", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.67440601541675, 60.22214182581639]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120995814", "unknown_4": "0", "housing_type": "119", "unknown_2": "1", "unknown_3": "240", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:13:30", "realized_volume": "4", "realized_amount": "1", "container_type": "etukontti", "volume": "4 m3", "no_of_bin": "1", "address": "FALLÅKER 2", "y": "6678867.07202431", "x": "25481953.8425467", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.70521719328952, 60.24672803245561]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB120611389", "unknown_4": "0", "housing_type": "521", "unknown_2": "1", "unknown_3": "150", "waste_point": "3", "unknown_1": "paino", "timestamp": "2013-02-20 05:18:42", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "PEHTORINKUJA 3", "y": "6681598.33236394", "x": "25483673.7886506", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.396955859136536, 60.17166132313089]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160013424", "unknown_4": "0", "housing_type": "011", "unknown_2": "1", "unknown_3": "480", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:45:47", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "VOLSINTIE 596", "y": "6673351.07829124", "x": "25466524.9269619", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.490366568186417, 60.22827613861524]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160040109", "unknown_4": "0", "housing_type": "719", "unknown_2": "1", "unknown_3": "170", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:29:46", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "WESTERKULLANTIE 60", "y": "6679615.05125954", "x": "25471758.7818466", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.441651942141633, 60.13081143034905]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160011015", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "260", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 05:55:09", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "GESTERBYNKAARI 3", "y": "6668778.08741638", "x": "25468967.5032332", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.442958706458246, 60.13204980084851]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160011015", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "70", "waste_point": "4", "unknown_1": "paino", "timestamp": "2013-02-20 05:58:07", "realized_volume": "4", "realized_amount": "1", "container_type": "etukontti", "volume": "4 m3", "no_of_bin": "1", "address": "GESTERBYNKAARI 3", "y": "6668915.44354188", "x": "25469041.2941253", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.44304141880561, 60.1322667620566]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160011015", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "170", "waste_point": "3", "unknown_1": "paino", "timestamp": "2013-02-20 06:01:11", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "GESTERBYNKAARI 3", "y": "6668939.57684429", "x": "25469046.0947273", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.44041002288483, 60.132799165069144]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160011028", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "70", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 06:04:17", "realized_volume": "4", "realized_amount": "1", "container_type": "etukontti", "volume": "4 m3", "no_of_bin": "1", "address": "GESTERBYNKAARI 3", "y": "6669000.12857009", "x": "25468900.3552227", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.43794458079244, 60.125999359237994]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160016120", "unknown_4": "0", "housing_type": "999", "unknown_2": "1", "unknown_3": "110", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 06:11:00", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "TORITIE", "y": "6668243.71312285", "x": "25468756.8940207", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.40694080477275, 60.09367389695346]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160010142", "unknown_4": "0", "housing_type": "039", "unknown_2": "1", "unknown_3": "400", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 07:09:38", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "EDIKSENTIE 1", "y": "6664657.36051309", "x": "25467001.1898101", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.4375275398835, 60.121883278240944]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160010883", "unknown_4": "0", "housing_type": "511", "unknown_2": "1", "unknown_3": "340", "waste_point": "3", "unknown_1": "paino", "timestamp": "2013-02-20 06:17:38", "realized_volume": "4", "realized_amount": "1", "container_type": "etukontti", "volume": "4 m3", "no_of_bin": "1", "address": "KIRKKOTALLINTIE 6", "y": "6667785.33085611", "x": "25468729.8085224", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                    {"geometry": {"type": "Point", "coordinates": [24.386722568137202, 60.09101937182978]}, "type": "Feature", "properties": {"unload_place_name": "Ämmässuo", "agreement_no": "BB160010375", "unknown_4": "0", "housing_type": "039", "unknown_2": "1", "unknown_3": "390", "waste_point": "1", "unknown_1": "paino", "timestamp": "2013-02-20 07:16:11", "realized_volume": "8", "realized_amount": "1", "container_type": "etukontti", "volume": "8 m3", "no_of_bin": "1", "address": "HARJU 2", "y": "6664371.88428347", "x": "25465873.4902888", "measured": "punnittu", "waste_fraction": "Sekajäte", "unload_place_code": "188705"}}, 
+                ]    
         };
 
         var reader = new OpenLayers.Format.GeoJSON();
