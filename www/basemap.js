@@ -5,6 +5,26 @@ var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 // initialize map when page ready
 var map;
 
+// current selected event id;
+var selectedEvent=null;
+
+// database object
+var mydb = false;
+
+// values: "map" "calendar"
+var currentView="map";
+
+// record user's last query operation 0--none, 1--now, 2--next, 3--today, 4--week
+var currentQuery=0;
+
+// 0--no selection, 1--select for date
+var dayClickMode=0;
+
+// 0--view event info, 1--modify event, 2--add new event
+var eventMode=0;
+
+// marker popups, show learning location information
+var popups = [];
 // set up projections
 // World Geodetic System 1984 projection (lon/lat)
 var WGS84 = new OpenLayers.Projection("EPSG:4326");
@@ -12,6 +32,14 @@ var WGS84 = new OpenLayers.Projection("EPSG:4326");
 // WGS84 Google Mercator projection (meters)
 var WGS84_google_mercator = new OpenLayers.Projection("EPSG:900913");
 
+//App initializes now 
+  function initApp()
+  {   initDB();
+      InsertRecords();
+      initEventForm();
+      initCalendar();
+
+  }
 
 var init = function (onSelectFeatureFunction) {
 
@@ -19,7 +47,7 @@ var init = function (onSelectFeatureFunction) {
 
     var sprintersLayer = new OpenLayers.Layer.Vector("Sprinters", {
         styleMap: new OpenLayers.StyleMap({
-            externalGraphic: "img/mobile-loc.png",
+            externalGraphic: "resources/img/empty_trash.png",
             graphicOpacity: 1.0,
             graphicWidth: 16,
             graphicHeight: 26,
@@ -52,7 +80,6 @@ var init = function (onSelectFeatureFunction) {
             format: new OpenLayers.Format.GeoJSON()
         })
     });
-    console.log(geojson_layer);
 
     // create map
     map = new OpenLayers.Map({
@@ -98,55 +125,6 @@ var init = function (onSelectFeatureFunction) {
                 name: "Bing Aerial + Labels",
                 transitionEffect: 'resize'
             }),
-            floor1=new OpenLayers.Layer.TMS("Floor 1","",{
-                                                            type:"png",
-                                                                visibility:true,
-                                                                reproject:true,
-                                                            isBaseLayer:false,
-                                                            getURL:function(bb) {
-                                                            var r=this.map.getResolution();
-                                                            var x=Math.round((bb.left-this.maxExtent.left)/(r*256));
-                                                            var y=Math.round((this.maxExtent.top-bb.top)/(r*256));
-                                                            var z=this.map.getZoom();
-                                                            return('tiles-main-floor1/'+z+'/'+x+'/'+y+'.png');
-                                                            }}),
-                                                                   
-            floor2=new OpenLayers.Layer.TMS('Floor 2','',{
-                                                            type:'png',
-                                                                    visibility:false,
-                                                                    reproject:true,
-                                                            isBaseLayer:false,
-                                                            getURL:function(bb) {
-                                                            var r=this.map.getResolution();
-                                                            var x=Math.round((bb.left-this.maxExtent.left)/(r*256));
-                                                            var y=Math.round((this.maxExtent.top-bb.top)/(r*256));
-                                                            var z=this.map.getZoom();
-                                                            return('tiles-main-floor2/'+z+'/'+x+'/'+y+'.png');
-                                                            }}),
-            floor3=new OpenLayers.Layer.TMS('Floor 3','',{
-                                                            type:'png',
-                                                                visibility:false,
-                                                                reproject:true,
-                                                            isBaseLayer:false,
-                                                            getURL:function(bb) {
-                                                            var r=this.map.getResolution();
-                                                            var x=Math.round((bb.left-this.maxExtent.left)/(r*256));
-                                                            var y=Math.round((this.maxExtent.top-bb.top)/(r*256));
-                                                            var z=this.map.getZoom();
-                                                            return('tiles-main-floor3/'+z+'/'+x+'/'+y+'.png');
-                                                            }}),
-            floor4=new OpenLayers.Layer.TMS('Floor 4','',{
-                                                            type:'png',
-                                                            visibility:false,
-                                                                reproject:true,
-                                                                isBaseLayer:false,
-                                                            getURL:function(bb) {
-                                                            var r=this.map.getResolution();
-                                                            var x=Math.round((bb.left-this.maxExtent.left)/(r*256));
-                                                            var y=Math.round((this.maxExtent.top-bb.top)/(r*256));
-                                                            var z=this.map.getZoom();
-                                                            return('tiles-main-floor4/'+z+'/'+x+'/'+y+'.png');
-                                                            }}),
             vector,
             geojson_layer,
             sprintersLayer
