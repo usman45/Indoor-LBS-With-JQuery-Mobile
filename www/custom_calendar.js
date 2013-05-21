@@ -1,3 +1,24 @@
+// current selected event id;
+var selectedEvent=null;
+
+// database object
+var mydb = false;
+
+// values: "map" "calendar"
+var currentView="map";
+
+// record user's last query operation 0--none, 1--now, 2--next, 3--today, 4--week
+var currentQuery=0;
+
+// 0--no selection, 1--select for date
+var dayClickMode=0;
+
+// 0--view event info, 1--modify event, 2--add new event
+var eventMode=0;
+
+/*the calendar is initialized
+ *
+ */
 function initCalendar() {
   // Get current time
   var date = new Date();
@@ -5,10 +26,7 @@ function initCalendar() {
   var m = date.getMonth();
   var y = date.getFullYear();
 
-  /* initialize the calendar
-   * aspectRatio: determins the width-to-height aspect ratio of the calendar
-   * theme: enable/disable use of jQuery UI theming
-   * header: defines the buttons and title at the top of the calendar
+  /* header: defines the buttons and title at the top of the calendar
    * events: events source of the calendar
    * eventClick: function triggered by clicking the event
    * dayClick: function triggered by clicking the day
