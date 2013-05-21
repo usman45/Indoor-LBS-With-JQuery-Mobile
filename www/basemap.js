@@ -32,15 +32,6 @@ var WGS84 = new OpenLayers.Projection("EPSG:4326");
 // WGS84 Google Mercator projection (meters)
 var WGS84_google_mercator = new OpenLayers.Projection("EPSG:900913");
 
-//App initializes now 
-  function initApp()
-  {   initDB();
-      InsertRecords();
-      initEventForm();
-      initCalendar();
-
-  }
-
 var init = function (onSelectFeatureFunction) {
 
     var vector = new OpenLayers.Layer.Vector("Vector Layer", {});
@@ -199,5 +190,44 @@ var init = function (onSelectFeatureFunction) {
 
         return reader.read(features);
     }
+
+    /*
+       * Add the maker on the map
+       * place: the place name of the event
+       * longitude & latitude: the lon lat coordinates of the place
+       * content: the content of the maker popup
+       * i: index of the place
+       */
+      function addMarker(place, longitude, latitude, content, i) {
+          var size = new OpenLayers.Size(32,32);
+          var offset = new OpenLayers.Pixel(-(size.w/2),-size.h);
+          var icon = new OpenLayers.Icon("../resources/img/marker.png",size,offset);
+          var lonlat = new OpenLayers.LonLat(longitude, latitude).transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
+      
+          var contentSize = new OpenLayers.Size(250,100);
+      
+          var anchorSize = new OpenLayers.Size(32,32);
+          var anchorOffset = new OpenLayers.Pixel(-(size.w/2),-size.h);
+          var anchor=new OpenLayers.Icon("../resources/img/marker.png",anchorSize,anchorOffset);
+      
+          // create new popup
+          popups[i] = new OpenLayers.Popup.FramedCloud(place, lonlat, contentSize, content, anchor, false);
+      
+      // add popup on map
+          map.addPopup(popups[i]);
+      // hide popup
+          popups[i].hide();
+      
+          var marker = new OpenLayers.Marker(lonlat,icon);
+      
+          // add touchstart event on the marker
+          marker.events.register("touchstart", marker, function(e){
+                                 // show or hide popup
+                                 popups[i].toggle();
+                                 })
+      
+          // add the marker to the marker layer
+          markers.addMarker(marker);
+      }
 
 };
