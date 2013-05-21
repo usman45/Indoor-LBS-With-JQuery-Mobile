@@ -54,11 +54,25 @@ $(window).bind("orientationchange resize pageshow", fixContentHeight);
 //popup list view
 $('#popup').live('pageshow',function(event, ui){
     var li = "";
-    for(var attr in selectedFeature.attributes){
+    var attr;
+    for(attr in selectedFeature.attributes){
         li += "<li><div style='width:50%;float:left'>" + attr + "</div><div style='width:50%;float:right'>" 
         + selectedFeature.attributes[attr] + "</div></li>";
     }
     $("ul#details-list").empty().append(li).listview("refresh");
+});
+
+// calendar view
+$('#calendarpage').live('pageshow',function(event, ui){
+    initCalendar();
+    /*initDB();
+    InsertRecords();
+    initEventForm();*/
+});
+
+// create new event
+$('#newevent').live('click',function(){
+    onCreate();
 });
 
 // Search feature JS
