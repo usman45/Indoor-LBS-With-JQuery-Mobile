@@ -7,24 +7,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta name="apple-mobile-web-app-capable" content="yes">
 		
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">
-        <link rel="stylesheet" href="styles/style.mobile.css" type="text/css">
+        <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">
+        <link rel="stylesheet" type="text/css" href="styles/style.mobile.css" >
+        <link rel='stylesheet' type='text/css' href='styles/fullcalendar.css'>
             
         <script src="libraries/jquery-1.6.4.min.js"></script>
         <script src="libraries/jquery.mobile-1.0.1.min.js"></script>
         <script src="libraries/OpenLayers.mobile-2.12.js"></script>
         <script src="libraries/OpenLayers-2.12.js"></script>
         <script src="libraries/phonegap-1.0.0.js"></script>
+        <script src='libraries/fullcalendar-1.5.4.min.js'></script>
 
         <script src="basemap.js"></script>
         <script src="features.js"></script>
+        <script src="custom_calendar.js"></script>
          
-         <!--coordinates data -->   
-        <script type="text/javascript" src="nav/main1.js"></script>
-        <script type="text/javascript" src="nav/main2.js"></script>
-        <script type="text/javascript" src="nav/main3.js"></script>
-        <script type="text/javascript" src="nav/main4.js"></script>
-
+     	<!-- coordinates data -->   
         <script type="text/javascript" src="geoJSON.js"></script>
     </head>
     <body>
@@ -32,8 +30,9 @@
 		<!--Home Page-->
         <div data-role="page" id="mappage" data-theme="b">		
 			<div data-role="footer" data-theme="b">
+				<a href="#calendarpage" data-icon="calendar" data-role="button" id="calendarimg">Calendar</a>
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-				<a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>
+				<a href="#" data-icon="locate" data-role="button" id="locate">Locate</a>
 				<a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
 				<a href="#directions" data-icon="directions" data-role="button">Get Directions</a>
 			</div>
@@ -51,7 +50,89 @@
 			</div>
 		  
 		</div>
-		
+
+		<!--Sub page, Calendar-->
+        <div data-role="page" id="calendarpage">
+			<div data-role="header" data-theme="b">
+				<h1>Calendar</h1>
+				<a href="#mappage" data-icon="home" data-role="button">Home</a>
+				<a href="#formpage" data-icon="plus" data-role="button" id="newevent">Add</a>
+			</div>
+			
+			<!-- /content -->
+			<div data-role="content">       
+        		<div id='calendar' style="width:100%;"></div>
+    		</div>
+			<div data-role="footer" data-theme="b" class="ui-bar">
+				<a href="index.html" data-role="button" data-icon="arrow-u">Up</a>
+				<a href="index.html" data-role="button" data-icon="arrow-d">Down</a>
+			</div>
+        </div>
+
+		<!--Sub page, Add event-->
+        <div data-role="page" id="formpage" data-theme="b">
+        	<div data-role="header" data-theme="b">
+				<h1>New event</h1>
+				<a href="#mappage" data-icon="home" data-role="button">Home</a>
+				<a href="#formpage" data-role="button" data-icon="plus">Cancel</a>
+			</div>
+        	<div id="eventinfo" class="myform">
+        		<form id="form">
+
+                  <div class="ui-grid-d" id="eventtitle">
+                    <div class="ui-block-a"><label for="title">Title:</label></div>
+                    <div class="ui-block-b" style="width: 260px;"><input type="text" name="title" id="eventname" readonly="readonly" class="required"/></div>
+                    <div class="ui-block-c"><label for="place">Venue:</label></div>
+                    <div class="ui-block-d" disabled= "true" id="place">
+                      <select>
+                        <option value="ND">Not Decided</option>
+                      </select></div>
+                  </div></br>
+
+                  <div class="ui-grid-b" id="choosedate">
+                    <div class="ui-block-a"><label for="date">Date Input:</label></div>
+                    <div class="ui-block-b" style="position: relative; right: 180px; width: 260px;"><input type="date" onclick="onDate()" name="date"></div>
+                  </div></br>
+
+                  <div class="ui-grid-d">
+                  	<div class="ui-block-a"><label for="startingtime">From:</label></div>
+                  	<div class="ui-block-b" disabled="true" >
+                      <select id="startime">
+                        <option>08:00</option>
+                        <option>19:30</option>
+                        <option>19:45</option>
+                        <option>20:00</option>
+                      </select>
+                    </div>
+                    <div class="ui-block-c"><label for="endingtime">To:</label></div>
+                    <div class="ui-block-b" disabled="true">
+                      <select id="endtime">
+                        <option>08:00</option>
+                        <option>08:15</option>
+                        <option>08:30</option>
+                      </select>
+                    </div>
+                  </div></br>
+
+                  <div class="ui-grid-a" id="description">
+                  	<div class="ui-block-a"><label for="description">Description:</label></div>
+                  	<div class="ui-block-b"><textarea id="description"></textarea></div>
+                  </div></br>
+
+                  <div class="ui-grid-b" style="width: 600px;">
+                    <div class="ui-block-a"><button button type="submit" onclick="onDone()" data-theme="b" id="done">Submit</button></div>
+                    <div class="ui-block-b"><button button type="submit" onclick="onCancel()" data-theme="c" id="cancel">Cancel</button></div>
+                  </div>
+                  <div class="ui-grid-b" id="hideoncreate" style="width: 600px;">
+                    <div class="ui-block-a"><button button type="submit" onclick="onViewOnMap()" data-theme="c" id="viewonmap">Show On Map</button></div>
+                    <div class="ui-block-b"><button button type="submit" onclick="onModify()" data-theme="c" id="modify">Edit</button></div>
+                    <div class="ui-block-c"><button button type="submit" onclick="onDelete()" data-theme="c" id="delete">Delete</button></div>
+                  </div> 
+
+                </form>
+            </div>
+        </div>
+
 		<!--Sub page, Search-->
         <div data-role="page" id="searchpage">
 			<div data-role="header"  data-theme="b">
