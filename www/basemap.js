@@ -5,26 +5,6 @@ var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 // initialize map when page ready
 var map;
 
-// current selected event id;
-var selectedEvent=null;
-
-// database object
-var mydb = false;
-
-// values: "map" "calendar"
-var currentView="map";
-
-// record user's last query operation 0--none, 1--now, 2--next, 3--today, 4--week
-var currentQuery=0;
-
-// 0--no selection, 1--select for date
-var dayClickMode=0;
-
-// 0--view event info, 1--modify event, 2--add new event
-var eventMode=0;
-
-// marker popups, show learning location information
-var popups = [];
 // set up projections
 // World Geodetic System 1984 projection (lon/lat)
 var WGS84 = new OpenLayers.Projection("EPSG:4326");
