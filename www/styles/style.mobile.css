@@ -131,10 +131,3 @@ img.olTileImage {
     position: absolute !important;
     bottom: 0px;
 }
-textarea#description {
-    position: relative;
-    right: 405px;
- } 
- #done {
-    width: 200px;
- }
