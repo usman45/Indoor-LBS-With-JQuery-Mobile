@@ -1,0 +1,18 @@
+{
+  "PLACES": {
+    "PLACE": [
+      {
+        "ID": "1",
+        "NAME": "Main Building.1",
+        "LONGITUDE": "24.828821",
+        "LATITUDE": "60.185601"
+      },
+      {
+        "ID": "2",
+        "NAME": "Main Building.2",
+        "LONGITUDE": "24.826988",
+        "LATITUDE": "60.18594"
+      }
+    ]
+  }
+}
