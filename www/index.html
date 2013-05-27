@@ -28,137 +28,143 @@
         <script src="basemap.js"></script>
         <script src="features.js"></script>
         <script src="custom_calendar.js"></script>
+        <script src="chart.js"></script>
          
      	  <!-- coordinates data -->   
         <!-- <script type="text/javascript" src="geoJSON.js"></script> -->
     </head>
     
     <body>
-		<!--Home Page-->
-    <div data-role="page" id="mappage" data-theme="b">		
-		  <div data-role="footer" data-theme="b">
-  			<a href="#calendarpage" data-icon="calendar" data-role="button" id="calendarimg">Calendar</a>
-  			<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-  			<a href="#" data-icon="locate" data-role="button" id="locate">Locate</a>
-  			<a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
-  			<a href="#graph" data-icon="graph" data-role="button">Graph</a>
-	    </div>
-		
-			<!--/content-->
-			<div data-role="content">
-				<div id="map"></div>				
-				<!--Zoom-In/out navigations-->
-				<div id="navigation" data-role="controlgroup" data-type="vertical">
-					<a href="#" data-role="button" data-icon="plus" id="plus"
-					data-iconpos="notext"></a>
-					<a href="#" data-role="button" data-icon="minus" id="minus"
-					data-iconpos="notext"></a>
-				</div>
-			</div>
-		  
-		</div>
-
-		<!--Sub page, Calendar-->
-    <div data-role="page" id="calendarpage">
-      <!--header-->
-    	<div data-role="header" data-theme="b">
-    		<h1>Calendar</h1>
-    		<a href="#mappage" data-icon="home" data-role="button">Home</a>
-    		<a href="#popup1" data-icon="plus" data-role="button" id="newevent">Add</a>
+    	<!--Home Page-->
+      <div data-role="page" id="mappage" data-theme="b">		
+    	  <div data-role="footer" data-theme="b">
+    			<a href="#calendarpage" data-icon="calendar" data-role="button" id="calendarimg">Calendar</a>
+    			<a href="#searchpage" data-icon="search" data-role="button">Search</a>
+    			<a href="#" data-icon="locate" data-role="button" id="locate">Locate</a>
+    			<a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
+    			<a href="#chart"  data-icon="bar-chart" data-role="button">Chart</a>
+        </div>
+    	
+    		<!--/content-->
+    		<div data-role="content">
+    			<div id="map"></div>				
+    			<!--Zoom-In/out navigations-->
+    			<div id="navigation" data-role="controlgroup" data-type="vertical">
+    				<a href="#" data-role="button" data-icon="plus" id="plus"
+    				data-iconpos="notext"></a>
+    				<a href="#" data-role="button" data-icon="minus" id="minus"
+    				data-iconpos="notext"></a>
+    			</div>
+    		</div>
     	</div>
-      <!--calendar-->
-      <div data-role="content" id="calendar"></div>  
-    </div>
 
-		<!--Popup, Add event-->
-    <div data-role="dialog" id="popup1" data-theme="b">
-      <div data-role="header" data-theme="b">
-				<h1>New event</h1>
-				<a href="#mappage" data-icon="home" data-role="button">Home</a>
-			</div>
-        	<div data-role="content" id="eventinfo">
-            <div class="fieldcontain" id="eventtitle">
-              <label for="title">Title:</label>
-              <input type="text" name="title" id="eventname"/> 
-            </div>
+    	<!--Sub page, Calendar-->
+      <div data-role="page" id="calendarpage">
+        <!--header-->
+      	<div data-role="header" data-theme="b">
+      		<h1>Calendar</h1>
+      		<a href="#mappage" data-icon="home" data-role="button">Home</a>
+      		<a href="#popup1" data-icon="plus" data-role="button" id="newevent">Add</a>
+      	</div>
+        <!--calendar-->
+        <div data-role="content" id="calendar"></div>  
+      </div>
 
-            <div class="fieldcontain" id="place">               
-              <label for="place">Venue:</label>
-                <select id="place1">
-                  <option value="ND">Not Available</option>
-                </select>
-            </div>                  
-            
-            <div class="fieldcontain" id="choosedate">
-              <label for="date">Date:</label>
-              <input type="date" name="date">
-            </div>
+    	<!--Popup, Add event-->
+      <div data-role="dialog" id="popup1" data-theme="b">
+        <div data-role="header" data-theme="b">
+    			<h1>New event</h1>
+    			<a href="#mappage" data-icon="home" data-role="button">Home</a>
+    		</div>
+          	<div data-role="content" id="eventinfo">
+              <div class="fieldcontain" id="eventtitle">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="eventname"/> 
+              </div>
 
-            <div class="fieldcontain" id="choosetime">
-            	<label for="time">Time:</label>
-              <input type="time" name="time">
-            </div>
+              <div class="fieldcontain" id="place">               
+                <label for="place">Venue:</label>
+                  <select id="place1">
+                    <option value="ND">Not Available</option>
+                  </select>
+              </div>                  
+              
+              <div class="fieldcontain" id="choosedate">
+                <label for="date">Date:</label>
+                <input type="date" name="date">
+              </div>
 
-            <div class="fieldcontain">
-            	<label for="description">Description:</label>
-            	<textarea id="description"></textarea>
-            </div>
+              <div class="fieldcontain" id="choosetime">
+              	<label for="time">Time:</label>
+                <input type="time" name="time">
+              </div>
 
-            <div class="fieldcontain">
-              <button button type="submit" onclick="onDone()" data-theme="b" id="done">Submit</button>
-              <button button type="submit" onclick="onCancel()" data-theme="c" id="cancel">Cancel</button>
-            </div>
-            <div class="fieldcontain" id="hideoncreate">
-              <button button type="submit" onclick="onViewOnMap()" data-theme="c" id="viewonmap">Show On Map</button>
-              <button button type="submit" onclick="onModify()" data-theme="c" id="modify">Edit</button>
-              <button button type="submit" onclick="onDelete()" data-theme="c" id="delete">Delete</button>
-            </div> 
-        </div>
-    </div>
+              <div class="fieldcontain">
+              	<label for="description">Description:</label>
+              	<textarea id="description"></textarea>
+              </div>
 
-		<!--Sub page, Search-->
-    <div data-role="page" id="searchpage">
-			<div data-role="header"  data-theme="b">
-				<h1>Search</h1>
-				<a href="#mappage" data-icon="home" data-role="button">Home</a>
-			</div>
-			<div data-role="fieldcontain"  data-theme="b">
-				<input type="search" name="query" id="query"
-					value="" placeholder="Search for places"
-					autocomplete="off"/>
-			</div>
-			<ul data-role="listview" data-inset="true" id="search_results"></ul> 
-    </div>
-		
-		<!-- Sub page, graph -->
-    <div data-role="page" id="graph">
-      <div data-role="header"  data-theme="b">
-        <h1>Wasteiq Graph</h1>
-        <a href="#mappage" data-icon="home" data-role="button">Home</a>
-      </div>  
-    </div> 
-		
-		<!--Sub page, Layers-->
-    <div data-role="page" id="layerspage">
-			<div data-role="header"  data-theme="b">
-				<h1>Layers</h1>
-				<a href="#mappage" data-icon="home" data-role="button">Home</a>
-			</div>
-			<div data-role="content"  data-theme="b">
-				<ul data-role="listview" data-inset="true" data-theme="b" data-dividertheme="c" id="layerslist">
-				</ul>
-			</div>
-		</div>
-		
-		<!--Pop-pod dialog box-->
-        <div data-role="dialog" id="popup">
-          <div data-position="inline" data-theme="b" data-role="header" data-theme="b">
-            <h1>Details</h1>
+              <div class="fieldcontain">
+                <button button type="submit" onclick="onDone()" data-theme="b" id="done">Submit</button>
+                <button button type="submit" onclick="onCancel()" data-theme="c" id="cancel">Cancel</button>
+              </div>
+              <div class="fieldcontain" id="hideoncreate">
+                <button button type="submit" onclick="onViewOnMap()" data-theme="c" id="viewonmap">Show On Map</button>
+                <button button type="submit" onclick="onModify()" data-theme="c" id="modify">Edit</button>
+                <button button type="submit" onclick="onDelete()" data-theme="c" id="delete">Delete</button>
+              </div> 
           </div>
-          <div data-role="content" data-theme="b">
-            <ul data-role="listview" id="details-list">
-            </ul>
+      </div>
+
+    	<!--Sub page, Search-->
+      <div data-role="page" id="searchpage">
+    		<div data-role="header"  data-theme="b">
+    			<h1>Search</h1>
+    			<a href="#mappage" data-icon="home" data-role="button">Home</a>
+    		</div>
+    		<div data-role="fieldcontain"  data-theme="b">
+    			<input type="search" name="query" id="query"
+    				value="" placeholder="Search for places"
+    				autocomplete="off"/>
+    		</div>
+    		<ul data-role="listview" data-inset="true" id="search_results"></ul> 
+      </div>
+    	
+    	<!-- Sub page, chart -->
+      <div data-role="page" id="chart">
+        <div data-role="header"  data-theme="b">
+          <h1>Wasteiq Chart</h1>
+          <a href="#mappage" data-icon="home" data-role="button">Home</a>
+        </div> 
+        <div data-role="content"> 
+          <div id="chart1"></div>
+          <div id="info1">
+            Info goes in here.
           </div>
+        </div> 
+      </div> 
+    	
+    	<!--Sub page, Layers-->
+      <div data-role="page" id="layerspage">
+    		<div data-role="header"  data-theme="b">
+    			<h1>Layers</h1>
+    			<a href="#mappage" data-icon="home" data-role="button">Home</a>
+    		</div>
+    		<div data-role="content"  data-theme="b">
+    			<ul data-role="listview" data-inset="true" data-theme="b" data-dividertheme="c" id="layerslist">
+    			</ul>
+    		</div>
+    	</div>
+    	
+    	<!--Pop-pod dialog box-->
+      <div data-role="dialog" id="popup">
+        <div data-position="inline" data-theme="b" data-role="header" data-theme="b">
+          <h1>Details</h1>
         </div>
+        <div data-role="content" data-theme="b">
+          <ul data-role="listview" id="details-list">
+          </ul>
+        </div>
+      </div>
     </body>
 </html>
