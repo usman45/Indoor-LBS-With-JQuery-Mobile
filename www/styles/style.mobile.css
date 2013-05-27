@@ -131,3 +131,12 @@ img.olTileImage {
     position: absolute !important;
     bottom: 0px;
 }
+
+#chart1 {
+    position: relative;
+    width: 100%; 
+    height: 90%;
+    border: 1px solid #cacaca;
+    margin: 4px;
+
+}
