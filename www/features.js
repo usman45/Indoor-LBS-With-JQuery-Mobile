@@ -68,6 +68,11 @@ $('#calendarpage').live('pageshow',function(event, ui){
     $('#calendarpage').die('pageshow', arguments.callee);
 });
 
+// chart view
+$('#chartpage').live('pageshow',function(event, ui){
+    chart.initialize();
+});
+
 // create new event
 $('#newevent').live('click',function(){
     onCreate();
