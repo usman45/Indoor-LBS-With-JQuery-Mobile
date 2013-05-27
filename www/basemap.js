@@ -27,7 +27,7 @@ var init = function (onSelectFeatureFunction) {
     });
 
     var sprinters = getFeatures();
-    sprintersLayer.addFeatures(sprinters, geojson_layer);
+    sprintersLayer.addFeatures(sprinters);
 
     var selectControl = new OpenLayers.Control.SelectFeature(sprintersLayer, {
         autoActivate:true,
@@ -43,14 +43,14 @@ var init = function (onSelectFeatureFunction) {
     });
 
     // geoJSON Layer
-     var geojson_layer = new OpenLayers.Layer.Vector("GeoJSON", {
+     /*var geojson_layer = new OpenLayers.Layer.Vector("GeoJSON", {
         projection: WGS84,
         strategies: [new OpenLayers.Strategy.Fixed()],
         protocol: new OpenLayers.Protocol.HTTP({
             url: "geoJSON.js",
             format: new OpenLayers.Format.GeoJSON()
         })
-    });
+    });*/
 
     // create map
     map = new OpenLayers.Map({
@@ -97,7 +97,7 @@ var init = function (onSelectFeatureFunction) {
                 transitionEffect: 'resize'
             }),
             vector,
-            geojson_layer,
+            /*geojson_layer,*/
             sprintersLayer
         ],
         zoom: 16
